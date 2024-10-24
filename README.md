@@ -8,8 +8,6 @@ Most open-source swiper components have overly complicated implementations that 
 
 The implementation of this component is quite simple (less than a hundred lines). Instead of trying to be self-righteous or overly clever, it remains simple and straightforward. It does only what is necessary (which is handling touch events) and leaves the rest to the parent component.
 
-There are two ways to use it.
-
 If you just want a simple and tiny swiper, try this.
 
 1. `npm i @zzzzk/react-native-swiper`
