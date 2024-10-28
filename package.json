@@ -7,7 +7,10 @@
         "React Native",
         "Swiper"
     ],
-    "author": "",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zykeee/react-native-swiper"
+    },
     "license": "MIT",
     "dependencies": {},
     "peerDependencies": {
