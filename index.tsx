@@ -1,4 +1,4 @@
-import { Children, PropsWithChildren, useMemo, useRef, useState } from "react"
+import { Children, PropsWithChildren, useEffect, useMemo, useRef, useState } from "react"
 import { Animated, View } from "react-native"
 import { IntRange } from "type-fest"
 
@@ -14,11 +14,18 @@ export type SwiperProps = PropsWithChildren<{
 export const Swiper = (p: SwiperProps) => {
     const [currentX, setCurrentX] = useState(0)
     const [startX, setStartX] = useState(0)
-    const [marginLeftOffset, setMarginLeftOffset] = useState(0)
     const marginLeftAnimValue = useRef(new Animated.Value(0)).current
     const pageSize = useMemo(() => p.swipeConf.width, [p.swipeConf])
     const maxIdx = useMemo(() => Children.count(p.children) - 1, [p.children])
     const sensitivity = p.swipeConf.flipSensitivity ?? 50
+    
+    useEffect(() => {
+        Animated.spring(marginLeftAnimValue, {
+            toValue: -(p.idx * pageSize),
+            useNativeDriver: false,
+        }).start()
+    },[p.idx])
+
     return (
         <View
             style={{ overflow: "hidden", width: p.swipeConf.width }}
@@ -41,10 +48,9 @@ export const Swiper = (p: SwiperProps) => {
                 //Else: make content move with touch
                 setCurrentX(x)
                 Animated.spring(marginLeftAnimValue, {
-                    toValue: marginLeftOffset + delta,
+                    toValue: (marginLeftAnimValue as any)._value + delta,
                     useNativeDriver: false,
                 }).start()
-                setMarginLeftOffset(marginLeftOffset + delta)
             }}
             onTouchEnd={(e) => {
                 // when touch ends, 2 things to do is:
@@ -57,11 +63,6 @@ export const Swiper = (p: SwiperProps) => {
                 const idxChange = sign * (shouldFlip ? 1 : 0)
                 const finalIdx = makeItInInterval(p.idx + idxChange, 0, maxIdx)
                 p.onIdxChange(finalIdx)
-                Animated.spring(marginLeftAnimValue, {
-                    toValue: -finalIdx * pageSize,
-                    useNativeDriver: false,
-                }).start()
-                setMarginLeftOffset(-finalIdx * pageSize)
             }}
         >
             <Animated.View
